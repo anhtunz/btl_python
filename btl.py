@@ -101,10 +101,15 @@ class ManageProduct:
                         print("Lỗi: Số lượng không thể là số âm. Vui lòng nhập lại.")
                 except ValueError:
                     print("Lỗi: Vui lòng nhập một số nguyên cho số lượng tồn kho.")
-            try:
-                ngay_san_xuat = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
-            except ValueError:
-                print("Lỗi: Vui lòng nhập đúng định dạng")
+            while True:
+                try:
+                    ngay_san_xuat = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
+                    if ngay_san_xuat != 0:
+                        break
+
+                except ValueError:
+                    print("Lỗi: Vui lòng nhập đúng định dạng")
+
             while True:
                 try:
                     han_su_dung = datetime.strptime(input("Nhập hạn sử dụng (YYYY-MM-DD): "), "%Y-%m-%d")
