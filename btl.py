@@ -1,4 +1,6 @@
 from datetime import datetime
+
+
 class HangHoa:
     ma_hang: str
     ten_hang: str
@@ -15,6 +17,7 @@ class HangHoa:
         self.so_luong_ton_kho = so_luong_ton_kho
         self.ngay_san_xuat = ngay_san_xuat
         self.han_su_dung = han_su_dung
+
     def get_ma_hang(self):
         return self.ma_hang
 
@@ -81,10 +84,6 @@ class DonNhapHang:
     def get_danh_sach_hang_hoa(self):
         return self.danh_sach_hang_hoa
 
-    # def tinh_tong_tien(self):
-    #     return sum(item['thanh_tien'] for item in self.danh_sach_hang_hoa)
-
-
 class ManageProduct:
     danh_sach_hang_hoa: list[HangHoa]
     danh_sach_don_hang: list[DonNhapHang]
@@ -135,10 +134,20 @@ class ManageProduct:
                         print("Lỗi: Số lượng không thể là số âm. Vui lòng nhập lại.")
                 except ValueError:
                     print("Lỗi: Vui lòng nhập một số nguyên cho số lượng tồn kho.")
-            try:
-                ngay_san_xuat = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
-            except ValueError:
-                print("Lỗi: Vui lòng nhập đúng định dạng")
+            # try:
+            #     ngay_san_xuat = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
+            # except ValueError:
+            #     print("Lỗi: Vui lòng nhập đúng định dạng")
+            while True:
+                try:
+                    ngay_san_xuat = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
+                    if ngay_san_xuat is not None:
+                        break
+                    else:
+                        print("Lỗi: Vui lòng nhập lại.")
+
+                except ValueError:
+                    print("Lỗi: Vui lòng nhập đúng định dạng")
             while True:
                 try:
                     han_su_dung = datetime.strptime(input("Nhập hạn sử dụng (YYYY-MM-DD): "), "%Y-%m-%d")
@@ -175,7 +184,8 @@ class ManageProduct:
             for hang_hoa in self.danh_sach_hang_hoa:
                 print(
                     f"Mã hàng: {hang_hoa.get_ma_hang()}\t Tên: {hang_hoa.get_ten_hang()}\t "
-                    f"Giá bán: {hang_hoa.get_gia_ban()}\t Giá Nhập: {hang_hoa.get_gia_nhap()}\t  Số lượng tồn kho: {hang_hoa.get_so_luong_ton_kho()}")
+                    f"Giá bán: {hang_hoa.get_gia_ban()}\t Giá Nhập: {hang_hoa.get_gia_nhap()}\t  Số lượng tồn kho: {hang_hoa.get_so_luong_ton_kho()}"
+                    f"\t  Ngày sản xuất: {hang_hoa.get_ngay_san_xuat()}\t  Ngày hết hạn: {hang_hoa.get_han_su_dung()}")
 
     def them_don_hang(self):
         try:
@@ -214,6 +224,7 @@ class ManageProduct:
             raise ValueError
 
     def sua_hang_hoa(self):
+        global ngay_san_xuat_sua
         try:
             while True:
                 try:
@@ -226,7 +237,9 @@ class ManageProduct:
                     print("Lỗi: Mã hàng chưa tồn tại")
             hang = self.get_hang_hoa_theo_id(ma_hang_hoa_sua)
             while True:
-                choose = input("Bạn muốn sửa thông tin nào: 1.Tên | 2.Gía bán | 3.Gía nhập | 4.Số lượng tồn kho | Nhấn bất kì để thoát\n Lựa chọn của bạn: ")
+                choose = input("Bạn muốn sửa thông tin nào: "
+                               "1.Tên | 2.Gía bán | 3.Gía nhập | 4.Số lượng tồn kho | 5.Ngày sx | 6.Hạn sx(phải sửa ngày sx trước) | Nhấn bất kì để thoát"
+                               "\nLựa chọn của bạn: ")
                 if choose == '1':
                     ten_hang_sua = input("Nhập tên hàng hoá: ")
                     hang.set_ten_hang(ten_hang_sua)
@@ -264,24 +277,30 @@ class ManageProduct:
                                 print("Lỗi: Số lượng không thể là số âm. Vui lòng nhập lại.")
                         except ValueError:
                             print("Lỗi: Vui lòng nhập một số nguyên cho số lượng tồn kho.")
+                elif choose == '5':
+                    while True:
+                        try:
+                            ngay_san_xuat_sua = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
+                            if ngay_san_xuat_sua is not None:
+                                hang.set_ngay_san_xuat(ngay_san_xuat_sua)
+                                break
+                            else:
+                                print("Lỗi: Vui lòng nhập lại.")
+                        except ValueError:
+                            print("Lỗi: Vui lòng nhập đúng định dạng")
+                elif choose == '6':
+                    while True:
+                        try:
+                            han_su_dung_sua = datetime.strptime(input("Nhập hạn sử dụng (YYYY-MM-DD): "), "%Y-%m-%d")
+                            if han_su_dung_sua > ngay_san_xuat_sua:
+                                hang.set_han_su_dung(han_su_dung_sua)
+                                break
+                            else:
+                                print("Lỗi: Hạn sử phải lớn hơn ngày sản xuất. Vui lòng nhập lại.")
+                        except ValueError:
+                            print("Lỗi: Vui lòng nhập đúng định dạng")
                 else:
                     break
-                    # try:
-                    #     ngay_san_xuat_sua = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
-                    #     hang.set_ngay_san_xuat(ngay_san_xuat_sua)
-                    # except ValueError:
-                    #     print("Lỗi: Vui lòng nhập đúng định dạng")
-                    # while True:
-                    #     try:
-                    #         han_su_dung_sua = datetime.strptime(input("Nhập hạn sử dụng (YYYY-MM-DD): "), "%Y-%m-%d")
-                    #         if han_su_dung_sua > ngay_san_xuat_sua:
-                    #             hang.set_han_su_dung(han_su_dung_sua)
-                    #             break
-                    #         else:
-                    #             print("Lỗi: Hạn sử phải lớn hơn ngày sản xuất. Vui lòng nhập lại.")
-                    #     except ValueError:
-                    #         print("Lỗi: Vui lòng nhập đúng định dạng")
-
         except ValueError:
             raise ValueError
 
@@ -304,6 +323,28 @@ class ManageProduct:
                 return product
         return None
 
+    def tong_tien_nhap_hang(self):
+        array_mang_tong_tien = {}
+        for bill in self.danh_sach_don_hang:
+            for detail in bill.get_danh_sach_hang_hoa():
+                if detail['ma_hang'] in array_mang_tong_tien:
+                    array_mang_tong_tien[detail['ma_hang']] = array_mang_tong_tien[detail['ma_hang']] + detail[
+                        'thanh_tien']
+                else:
+                    array_mang_tong_tien[detail['ma_hang']] = detail['thanh_tien']
+        return array_mang_tong_tien
+
+    def sap_xep_tang(self):
+        tong_nhap = self.tong_tien_nhap_hang()
+        if not tong_nhap:
+            print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
+        return sorted(tong_nhap.items(), key=lambda x: x[1])
+
+    def sap_xep_giam(self):
+        tong_nhap = self.tong_tien_nhap_hang()
+        if not tong_nhap:
+            print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
+        return sorted(tong_nhap.items(), key=lambda x: x[1], reverse=True)
 
 def main():
     manager = ManageProduct()
@@ -321,8 +362,9 @@ def main():
         print("3. Hiển thị danh sách hàng hoá")
         print("4. Thêm đơn hàng")
         print("5. Sửa thông tin hàng hoá")
-        print("6. Thoát")
-        choice = input("Chọn chức năng (1-4): ")
+        print("6. Sắp xếp theo tổng nhập")
+        print("7. Thoát")
+        choice = input("Chọn chức năng (1-7): ")
 
         if choice == '1':
             try:
@@ -348,6 +390,19 @@ def main():
         elif choice == '5':
             manager.sua_hang_hoa()
         elif choice == '6':
+            sap_xep = input("Sắp xếp từ cao đến thấp? (y/n): ").lower()
+            if sap_xep == "y":
+                result = manager.sap_xep_giam()
+                for item in result:
+                    print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
+            else:
+                result = manager.sap_xep_tang()
+                for item in result:
+                    print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
+
+            print("Đã sắp xếp theo tổng tiền nhập.")
+
+        elif choice == '7':
             print("Thoát chương trình. Hẹn gặp lại!")
             break
         else:
@@ -356,48 +411,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# # Ví dụ sử dụng:
-# # Tạo đối tượng đơn nhập hàng
-# don_nhap_hang_1 = DonNhapHang("DNH001", datetime.now().strftime("%d/%m/%Y"))
-# don_nhap_hang_2 = DonNhapHang("DNH002", datetime.now().strftime("%d/%m/%Y"))
-#
-# # Thêm hàng hoá vào đơn nhập hàng
-# so_luong_nhap_1 = 50
-# thanh_tien_1 = so_luong_nhap_1 * hang_hoa_1.gia_nhap
-# so_luong_nhap_2 = 30
-# thanh_tien_2 = so_luong_nhap_2 * hang_hoa_2.gia_nhap
-#
-# so_luong_nhap_3 = 40
-# thanh_tien_3 = so_luong_nhap_3 * hang_hoa_3.gia_nhap
-# so_luong_nhap_4 = 10
-# thanh_tien_4 = so_luong_nhap_4 * hang_hoa_4.gia_nhap
-#
-#
-# don_nhap_hang_1.them_hang_hoa(hang_hoa_1, so_luong_nhap_1, thanh_tien_1)
-# don_nhap_hang_1.them_hang_hoa(hang_hoa_2, so_luong_nhap_2, thanh_tien_2)
-#
-# don_nhap_hang_2.them_hang_hoa(hang_hoa_3, so_luong_nhap_3, thanh_tien_3)
-# don_nhap_hang_2.them_hang_hoa(hang_hoa_4, so_luong_nhap_4, thanh_tien_4)
-#
-# # Tính tổng tiền của đơn nhập hàng
-# tong_tien_don_nhap_hang_1 = don_nhap_hang_1.tinh_tong_tien()
-# tong_tien_don_nhap_hang_2 = don_nhap_hang_2.tinh_tong_tien()
-#
-# # In thông tin đơn nhập hàng
-# print(f"Mã Đơn Nhập Hàng: {don_nhap_hang_1.ma_don}")
-# print(f"Ngày Nhập Hàng: {don_nhap_hang_1.ngay_nhap_hang}")
-# print("Danh sách hàng hoá trong đơn nhập hàng:")
-# for item in don_nhap_hang_1.danh_sach_hang_hoa:
-#     print(f"  - Mã Hàng Hoá: {item['ma_hang']}, Tên Hàng Hoá: {item['ten_hang']}, Số Lượng Nhập: {item['so_luong_nhap']}, Thành Tiền: {item['thanh_tien']}")
-#
-# print(f"Tổng Tiền Đơn Nhập Hàng: {tong_tien_don_nhap_hang_1}")
-#
-#
-# print(f"Mã Đơn Nhập Hàng: {don_nhap_hang_2.ma_don}")
-# print(f"Ngày Nhập Hàng: {don_nhap_hang_2.ngay_nhap_hang}")
-# print("Danh sách hàng hoá trong đơn nhập hàng:")
-# for item in don_nhap_hang_2.danh_sach_hang_hoa:
-#     print(f"  - Mã Hàng Hoá: {item['ma_hang']}, Tên Hàng Hoá: {item['ten_hang']}, Số Lượng Nhập: {item['so_luong_nhap']}, Thành Tiền: {item['thanh_tien']}")
-#
-# print(f"Tổng Tiền Đơn Nhập Hàng: {tong_tien_don_nhap_hang_2}")
