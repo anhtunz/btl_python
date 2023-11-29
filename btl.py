@@ -339,12 +339,38 @@ class ManageProduct:
         if not tong_nhap:
             print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
         return sorted(tong_nhap.items(), key=lambda x: x[1])
-
+    
     def sap_xep_giam(self):
         tong_nhap = self.tong_tien_nhap_hang()
         if not tong_nhap:
             print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
         return sorted(tong_nhap.items(), key=lambda x: x[1], reverse=True)
+    
+    def hang_hoa_can_nhap(self, danh_sach_hang_hoa):
+        sorted_hang_hoa = sorted(danh_sach_hang_hoa, key=lambda x: x.so_luong_ton_kho)
+        # Lấy top 10 hàng ít nhất
+        top_10_hang_ito_nhat = sorted_hang_hoa[:10]
+        print("Danh sách hàng hóa cần nhập: ")
+        for hang_hoa in top_10_hang_ito_nhat: 
+            print(f"Mã hàng: {hang_hoa.get_ma_hang()}, Tên hàng: {hang_hoa.get_ten_hang()}, Số lượng tồn kho: {hang_hoa.get_so_luong_ton_kho()}")
+
+    def xoa_hang_hoa(self,danh_sach_hang_hoa):
+        print("Danh sách hàng hóa:")
+        for hang_hoa in danh_sach_hang_hoa:
+            print(f"Mã hàng: {hang_hoa.get_ma_hang()}, Tên hàng: {hang_hoa.get_ten_hang()}")
+        try:
+            ma_hang_can_xoa = input("Nhập mã hàng hóa cần xóa: ")
+            for hang_hoa in danh_sach_hang_hoa:
+                if hang_hoa.get_ma_hang() == ma_hang_can_xoa:
+                    danh_sach_hang_hoa.remove(hang_hoa)
+                    print(f"Hàng hóa {ma_hang_can_xoa} đã được xóa thành công.")
+                    return
+
+            print(f"Không tìm thấy hàng hóa với mã {ma_hang_can_xoa}. Xóa không thành công.")
+
+        except ValueError:
+            print("Vui lòng nhập một số nguyên.")
+
 
 def main():
     manager = ManageProduct()
@@ -363,8 +389,10 @@ def main():
         print("4. Thêm đơn hàng")
         print("5. Sửa thông tin hàng hoá")
         print("6. Sắp xếp theo tổng nhập")
-        print("7. Thoát")
-        choice = input("Chọn chức năng (1-7): ")
+        print("7. Hiển thị danh sách hàng hóa cần nhập thêm hàng.")
+        print("8. Xóa hàng hóa")
+        print("9. Thoát")
+        choice = input("Chọn chức năng (1-9): ")
 
         if choice == '1':
             try:
@@ -401,8 +429,11 @@ def main():
                     print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
 
             print("Đã sắp xếp theo tổng tiền nhập.")
-
         elif choice == '7':
+            manager.hang_hoa_can_nhap(manager.danh_sach_hang_hoa)
+        elif choice == '8':
+            manager.xoa_hang_hoa(manager.danh_sach_hang_hoa)
+        elif choice == '9':
             print("Thoát chương trình. Hẹn gặp lại!")
             break
         else:
