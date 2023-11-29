@@ -424,7 +424,7 @@ class ManageProduct:
                         f"\t  Thành tiền: {hang_hoa['thanh_tien']}\t ")
 
     def hien_thi_tong_thap_nhat(self):
-        array_tong_nhap = self.sap_xep_tang();
+        array_tong_nhap = self.sap_xep_tang()
         print("5 hàng hóa có tổng tiền nhập hàng thấp nhất:")
         for item in array_tong_nhap[:5]:
             print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
