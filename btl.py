@@ -252,8 +252,16 @@ class ManageProduct:
                                "1.Tên | 2.Gía bán | 3.Gía nhập | 4.Số lượng tồn kho | 5.Ngày sx | 6.Hạn sx(phải sửa ngày sx trước) | Nhấn bất kì để thoát"
                                "\nLựa chọn của bạn: ")
                 if choose == '1':
-                    ten_hang_sua = input("Nhập tên hàng hoá mới: ")
-                    hang.set_ten_hang(ten_hang_sua)
+                    while True:
+                        try:
+                            ten_hang_sua = input("Nhập tên hàng hoá mới: ")
+                            if ten_hang_sua == "":
+                                print("Lỗi: Vui lòng không để trống tên hàng hoá.")
+                            else:
+                                hang.set_ten_hang(ten_hang_sua)
+                                break
+                        except ValueError:
+                            print("Lỗi: Vui lòng nhập một số cho giá bán.")
                 elif choose == '2':
                     while True:
                         try:
