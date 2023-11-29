@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class HangHoa:
@@ -84,6 +84,7 @@ class DonNhapHang:
     def get_danh_sach_hang_hoa(self):
         return self.danh_sach_hang_hoa
 
+
 class ManageProduct:
     danh_sach_hang_hoa: list[HangHoa]
     danh_sach_don_hang: list[DonNhapHang]
@@ -97,14 +98,24 @@ class ManageProduct:
             while True:
                 try:
                     ma_hang = input("Nhập mã hàng hoá: ")
-                    if self.is_product_code_unique(ma_hang):
+                    if ma_hang == "":
+                        print("Lỗi: vui lòng nhập mã hàng hoá.")
+                    elif self.is_product_code_unique(ma_hang):
                         break
                     else:
                         print("Lỗi: Mã hàng đã tồn tại. Vui lòng nhập lại.")
                 except ValueError:
                     print("Lỗi: Mã hàng đã tồn tại")
 
-            ten_hang = input("Nhập tên hàng hoá: ")
+            while True:
+                try:
+                    ten_hang = input("Nhập tên hàng hoá: ")
+                    if ten_hang == "":
+                        print("Lỗi:  vui lòng nhập tên hàng hoá")
+                    else:
+                        break
+                except ValueError:
+                    print("Lỗi.")
             while True:
                 try:
                     gia_ban = float(input("Nhập giá bán: "))
@@ -241,12 +252,12 @@ class ManageProduct:
                                "1.Tên | 2.Gía bán | 3.Gía nhập | 4.Số lượng tồn kho | 5.Ngày sx | 6.Hạn sx(phải sửa ngày sx trước) | Nhấn bất kì để thoát"
                                "\nLựa chọn của bạn: ")
                 if choose == '1':
-                    ten_hang_sua = input("Nhập tên hàng hoá: ")
+                    ten_hang_sua = input("Nhập tên hàng hoá mới: ")
                     hang.set_ten_hang(ten_hang_sua)
                 elif choose == '2':
                     while True:
                         try:
-                            gia_ban_sua = float(input("Nhập giá bán: "))
+                            gia_ban_sua = float(input("Nhập giá bán mới: "))
                             if gia_ban_sua >= 0:
                                 hang.set_gia_ban(gia_ban_sua)
                                 break
@@ -257,7 +268,7 @@ class ManageProduct:
                 elif choose == '3':
                     while True:
                         try:
-                            gia_nhap_sua = float(input("Giá nhập: "))
+                            gia_nhap_sua = float(input("Giá nhập mới: "))
                             if gia_nhap_sua >= 0:
                                 hang.set_gia_nhap(gia_nhap_sua)
                                 break
@@ -269,7 +280,7 @@ class ManageProduct:
                 elif choose == '4':
                     while True:
                         try:
-                            so_luong_ton_kho_sua = int(input("Số lượng tồn kho: "))
+                            so_luong_ton_kho_sua = int(input("Số lượng tồn kho mới: "))
                             if so_luong_ton_kho_sua >= 0:
                                 hang.set_so_luong_ton_kho(so_luong_ton_kho_sua)
                                 break
@@ -280,7 +291,8 @@ class ManageProduct:
                 elif choose == '5':
                     while True:
                         try:
-                            ngay_san_xuat_sua = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "), "%Y-%m-%d")
+                            ngay_san_xuat_sua = datetime.strptime(input("Nhập ngày sản xuất (YYYY-MM-DD): "),
+                                                                  "%Y-%m-%d")
                             if ngay_san_xuat_sua is not None:
                                 hang.set_ngay_san_xuat(ngay_san_xuat_sua)
                                 break
@@ -339,21 +351,22 @@ class ManageProduct:
         if not tong_nhap:
             print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
         return sorted(tong_nhap.items(), key=lambda x: x[1])
-    
+
     def sap_xep_giam(self):
         tong_nhap = self.tong_tien_nhap_hang()
         if not tong_nhap:
             print("Không có thông tin nhập đơn hàng vui lòng kiểm tra lại.")
         return sorted(tong_nhap.items(), key=lambda x: x[1], reverse=True)
-    
+
     def hang_hoa_can_nhap(self, danh_sach_hang_hoa):
         sorted_hang_hoa = sorted(danh_sach_hang_hoa, key=lambda x: x.so_luong_ton_kho)
         top_10_hang_ito_nhat = sorted_hang_hoa[:10]
         print("Danh sách hàng hóa cần nhập: ")
-        for hang_hoa in top_10_hang_ito_nhat: 
-            print(f"Mã hàng: {hang_hoa.get_ma_hang()}, Tên hàng: {hang_hoa.get_ten_hang()}, Số lượng tồn kho: {hang_hoa.get_so_luong_ton_kho()}")
+        for hang_hoa in top_10_hang_ito_nhat:
+            print(
+                f"Mã hàng: {hang_hoa.get_ma_hang()}, Tên hàng: {hang_hoa.get_ten_hang()}, Số lượng tồn kho: {hang_hoa.get_so_luong_ton_kho()}")
 
-    def xoa_hang_hoa(self,danh_sach_hang_hoa):
+    def xoa_hang_hoa(self, danh_sach_hang_hoa):
         print("Danh sách hàng hóa:")
         for hang_hoa in danh_sach_hang_hoa:
             print(f"Mã hàng: {hang_hoa.get_ma_hang()}, Tên hàng: {hang_hoa.get_ten_hang()}")
@@ -370,6 +383,58 @@ class ManageProduct:
         except ValueError:
             print("Vui lòng nhập đúng mã sản phẩm.")
 
+    def tinh_gia_moi(self):
+        if not self.danh_sach_hang_hoa:
+            print("Danh sách hàng hoá trống.")
+        else:
+            co_hang_het_han = False
+            print("\nTính giá mới cho các hàng hóa sắp hết hạn sử dụng:")
+            for hang_hoa in self.danh_sach_hang_hoa:
+                hsd_con_lai = hang_hoa.han_su_dung - datetime.now()
+                if timedelta(days=0) <= hsd_con_lai <= timedelta(days=30):
+                    co_hang_het_han = True
+                    if timedelta(days=14) <= hsd_con_lai <= timedelta(days=30):
+                        giam_gia = 0.2  # 20% discount for products expiring in 2 weeks or more
+                    else:
+                        giam_gia = 0.45  # 45% discount for products expiring in less than 2 weeks
+
+                    gia_moi = hang_hoa.gia_ban * (1 - giam_gia)
+                    print(
+                        f"Mã hàng: {hang_hoa.get_ma_hang()}\t Tên: {hang_hoa.get_ten_hang()}\t "
+                        f"Hạn sử dụng còn lại: {hsd_con_lai.days} ngày\t Giá mới: {gia_moi}"
+                    )
+                    # Optionally, update the price in the object
+                    hang_hoa.gia_ban = gia_moi
+
+            if not co_hang_het_han:
+                print("Không có hàng hóa nào gần hết hạn sử dụng.")
+                self.hien_hang_hoa()
+
+    def hien_thi_don_nhap_hang(self):
+        if not self.danh_sach_don_hang:
+            print("Danh sách đơn nhập hàng trống.")
+        else:
+            print("\nDanh sách hàng hoá:")
+            for don_hang in self.danh_sach_don_hang:
+                print(
+                    f"Mã đơn hàng: {don_hang.get_ma_don()}\t Ngày Nhập: {don_hang.get_ngay_nhap_hang}\t ")
+                for hang_hoa in don_hang.get_danh_sach_hang_hoa():
+                    print(
+                        f"Mã Hàng Hoá: {hang_hoa['ma_hang']}\t Số lượng nhập : {hang_hoa['so_luong_nhap']}\t  Giá Nhập: {hang_hoa['gia_nhap']}"
+                        f"\t  Thành tiền: {hang_hoa['thanh_tien']}\t ")
+
+    def hien_thi_tong_thap_nhat(self):
+        array_tong_nhap = self.sap_xep_tang();
+        print("5 hàng hóa có tổng tiền nhập hàng thấp nhất:")
+        for item in array_tong_nhap[:5]:
+            print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
+
+    def hien_thi_tong_cao_nhat(self):
+        array_tong_nhap = self.sap_xep_giam()
+        print("5 hàng hóa có tổng tiền nhập hàng cao nhất:")
+        for item in array_tong_nhap[:5]:
+            print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
+
 
 def main():
     manager = ManageProduct()
@@ -384,10 +449,10 @@ def main():
         print("\n----- Menu -----")
         print("1. Thêm mới hàng hoá")
         print("2. Tìm kiếm hàng hoá")
-        print("3. Hiển thị danh sách hàng hoá")
-        print("4. Thêm đơn hàng")
-        print("5. Sửa thông tin hàng hoá")
-        print("6. Sắp xếp theo tổng nhập")
+        print("3. Sửa thông tin hàng hoá")
+        print("4. Sắp xếp theo tổng nhập")
+        print("5. Thống kê top hàng hoá tổng tiền nhập hàng")
+        print("6. Hiển thị hàng hoá sắp hết hạn sử dụng")
         print("7. Hiển thị danh sách hàng hóa cần nhập thêm hàng.")
         print("8. Xóa hàng hóa")
         print("9. Thoát")
@@ -411,12 +476,8 @@ def main():
                         f"Mã hàng: {product.get_ma_hang()}\t Tên: {product.get_ten_hang()}\t "
                         f"Giá bán: {product.get_gia_ban()}\t Số lượng tồn kho: {product.get_so_luong_ton_kho()}")
         elif choice == '3':
-            manager.hien_hang_hoa()
-        elif choice == '4':
-            manager.them_don_hang()
-        elif choice == '5':
             manager.sua_hang_hoa()
-        elif choice == '6':
+        elif choice == '4':
             sap_xep = input("Sắp xếp từ cao đến thấp? (y/n): ").lower()
             if sap_xep == "y":
                 result = manager.sap_xep_giam()
@@ -426,8 +487,11 @@ def main():
                 result = manager.sap_xep_tang()
                 for item in result:
                     print(f"Mã hàng: {item[0]}, Tổng tiền nhập: {item[1]} ")
-
-            print("Đã sắp xếp theo tổng tiền nhập.")
+        elif choice == '5':
+            manager.hien_thi_tong_cao_nhat()
+            manager.hien_thi_tong_thap_nhat()
+        elif choice == '6':
+            manager.tinh_gia_moi()
         elif choice == '7':
             manager.hang_hoa_can_nhap(manager.danh_sach_hang_hoa)
         elif choice == '8':
