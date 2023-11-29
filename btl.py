@@ -348,7 +348,6 @@ class ManageProduct:
     
     def hang_hoa_can_nhap(self, danh_sach_hang_hoa):
         sorted_hang_hoa = sorted(danh_sach_hang_hoa, key=lambda x: x.so_luong_ton_kho)
-        # Lấy top 10 hàng ít nhất
         top_10_hang_ito_nhat = sorted_hang_hoa[:10]
         print("Danh sách hàng hóa cần nhập: ")
         for hang_hoa in top_10_hang_ito_nhat: 
@@ -369,7 +368,7 @@ class ManageProduct:
             print(f"Không tìm thấy hàng hóa với mã {ma_hang_can_xoa}. Xóa không thành công.")
 
         except ValueError:
-            print("Vui lòng nhập một số nguyên.")
+            print("Vui lòng nhập đúng mã sản phẩm.")
 
 
 def main():
